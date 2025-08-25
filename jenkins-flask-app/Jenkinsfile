@@ -1,16 +1,7 @@
-pipeline {
-    agent any
-
-    environment {
-        DOCKERHUB_USER = credentials('dockerhub-username') // Add in Jenkins credentials
-        DOCKERHUB_PASS = credentials('dockerhub-password')
-        IMAGE_NAME = "your-dockerhub-username/jenkins-flask-app"
-    }
-
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/yourusername/jenkins-flask-app.git'
+                git branch: 'main', url: 'https://github.com/VibhaU/jenkins-flask-app.git'
             }
         }
 
