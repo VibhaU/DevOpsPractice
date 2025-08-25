@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_USER = credentials('dockerhub-username') // Add in Jenkins credentials
+        DOCKERHUB_PASS = credentials('dockerhub-password')
+        IMAGE_NAME = "your-dockerhub-username/jenkins-flask-app"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/yourusername/jenkins-flask-app.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh 'docker build -t $IMAGE_NAME:latest .'
+                }
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                script {
+                    sh "echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin"
+                }
+            }
+        }
+
+        stage('Push Image to DockerHub') {
+            steps {
+                script {
+                    sh "docker push $IMAGE_NAME:latest"
+                }
+            }
+        }
+
+        stage('Deploy Container') {
+            steps {
+                script {
+                    sh 'docker stop flask-app || true && docker rm flask-app || true'
+                    sh 'docker run -d -p 5000:5000 --name flask-app $IMAGE_NAME:latest'
+                }
+            }
+        }
+    }
+}
+// Jenkinsfile for CI/CD pipeline of a Flask app with Docker and DockerHub
+// This pipeline checks out code, builds a Docker image, pushes it to DockerHub, and deploys the container
+// Make sure to replace 'your-dockerhub-username' and 'yourusername' with actual values
+// Also, ensure Jenkins has Docker installed and configured properly
+// Add DockerHub credentials in Jenkins and reference them correctly
+// Ensure the Flask app listens on port 5000 as specified in the Docker run command
