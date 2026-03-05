@@ -1,3 +1,4 @@
+# Terraform
 name: Terraform Infrastructure
 
 on:
@@ -9,6 +10,7 @@ on:
     branches:
       - main
       - master
+  workflow_dispatch: 
 
 jobs:
   terraform:
